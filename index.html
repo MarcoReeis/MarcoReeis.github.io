@@ -89,7 +89,7 @@
 
   <script>
     // Configuração da Data (ALTERE AQUI)
-    const dataInicio = new Date("2025-06-11T00:00:00"); 
+    const dataInicio = new Date("2025-06-12T00:00:00"); 
     const dataHoje = new Date();
     dataHoje.setHours(0, 0, 0, 0);
     
@@ -99,8 +99,8 @@
     
     // Data do 1º aniversário
     const dataAniversario = new Date(dataInicio);
-    dataAniversario.setFullYear(dataInicio.getFullYear() + 1);
-    const diasParaAniversario = Math.ceil((dataAniversario - dataHoje) / (86400000));
+    const dataFinal= new Date("2025-12-07")
+    const diasParaAniversario = Math.ceil((datafinal - dataHoje) / (86400000));
 
     // Elementos do DOM
     const diaNumSpan = document.getElementById("diaNum");
