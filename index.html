@@ -60,6 +60,10 @@
       color: #666;
       margin-top: 20px;
     }
+    .mensagem-aniversario {
+      color: #d23669;
+      font-weight: bold;
+    }
     @media (max-width: 500px) {
       .container {
         padding: 20px;
@@ -80,24 +84,29 @@
     <h1>Motivo #<span id="diaNum">0</span> de 179</h1>
     <div id="motivo">Carregando seu motivo especial...</div>
     <button id="compartilhar">Compartilhar ❤️</button>
-    <p class="contador">Faltam <span id="diasRestantes">179</span> dias para completar nosso 1 ano! 💘</p>
+    <p class="contador">Faltam <span id="diasRestantes">179</span> dias para nosso 1 ano! <span id="mensagemExtra"></span></p>
   </div>
 
   <script>
-    // Configuração da Data (ALTERE AQUI PARA TESTAR)
-    const dataInicio = new Date("2025-06-12T00:00:00");
-    // const dataInicio = new Date(); // Para testar com data atual
-    
+    // Configuração da Data (ALTERE AQUI)
+    const dataInicio = new Date("2025-06-12T00:00:00"); 
     const dataHoje = new Date();
     dataHoje.setHours(0, 0, 0, 0);
     
+    // Cálculo do dia atual e dias restantes (CORRIGIDO)
     const diferencaDias = Math.floor((dataHoje - dataInicio) / (86400000));
     const motivoIndex = diferencaDias;
+    
+    // Data do 1º aniversário
+    const dataAniversario = new Date(dataInicio);
+    dataAniversario.setFullYear(dataInicio.getFullYear() + 1);
+    const diasParaAniversario = Math.ceil((dataAniversario - dataHoje) / (86400000));
 
     // Elementos do DOM
     const diaNumSpan = document.getElementById("diaNum");
     const motivoDiv = document.getElementById("motivo");
     const diasRestantesSpan = document.getElementById("diasRestantes");
+    const mensagemExtraSpan = document.getElementById("mensagemExtra");
     const compartilharBtn = document.getElementById("compartilhar");
 
     // Animação de transição
@@ -110,10 +119,26 @@
       }, 300);
     }
 
+    // Atualiza a mensagem de contagem regressiva (FUNÇÃO NOVA)
+    function atualizarContador() {
+      if (diasParaAniversario > 0) {
+        diasRestantesSpan.textContent = diasParaAniversario;
+        mensagemExtraSpan.textContent = "💘";
+      } else if (diasParaAniversario === 0) {
+        diasRestantesSpan.textContent = "0";
+        mensagemExtraSpan.textContent = "🎉 Hoje é nosso aniversário! 🎉";
+        mensagemExtraSpan.classList.add('mensagem-aniversario');
+      } else {
+        diasRestantesSpan.textContent = "0";
+        mensagemExtraSpan.textContent = "🎉 Já passou nosso aniversário!";
+        mensagemExtraSpan.classList.add('mensagem-aniversario');
+      }
+    }
+
     // Carrega os motivos
     fetch('179_motivos.txt')
       .then(response => {
-        if (!response.ok) throw new Error('Erro ao carregar os motivos');
+        if (!response.ok) throw new Error('Erro ao carregar os motivos ;-;');
         return response.text();
       })
       .then(texto => {
@@ -122,17 +147,18 @@
         if (motivoIndex >= 0 && motivoIndex < motivos.length) {
           diaNumSpan.textContent = motivoIndex + 1;
           mostrarMotivo(motivos[motivoIndex].replace(/^\d+\.\s*/, ""));
-          diasRestantesSpan.textContent = 178 - motivoIndex;
         } 
         else if (motivoIndex < 0) {
-          mostrarMotivo("⌛ Vamos começar a contar dia 12/06/2025! Volte depois 💌");
-          diasRestantesSpan.textContent = Math.abs(motivoIndex);
+          mostrarMotivo("⌛ Vamos começar a contar dia: " + 
+                       dataInicio.toLocaleDateString('pt-BR') + 
+                       "! Volte depois :p");
         } 
         else {
-          mostrarMotivo("🎉 Chegamos ao nosso 1º ano de namoro! Você é a pessoa mais importante pra mim. Te amo infinito! ❤️");
+          mostrarMotivo("🎉 Completamos nosso primeiro ano de namoro!!!!! Tu é o amor da minha vida, tudo contigo é mais do que perfeito. Te amo infinito! ❤️");
           diaNumSpan.textContent = "179";
-          diasRestantesSpan.textContent = "0";
         }
+        
+        atualizarContador(); // Chama a função nova
       })
       .catch(error => {
         mostrarMotivo("💔 Ops! Não consegui carregar os motivos... Mas saiba que te amo muito!");
@@ -146,7 +172,7 @@
       
       if (navigator.share) {
         navigator.share({
-          title: 'O nosso motivo de hoje é:',
+          title: 'Nosso motivo especial de hoje',
           text: textoCompartilhar,
           url: window.location.href
         }).catch(err => copiarTexto(textoCompartilhar));
