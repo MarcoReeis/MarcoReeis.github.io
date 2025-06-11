@@ -84,30 +84,31 @@
     <h1>Motivo #<span id="diaNum">0</span> de 179</h1>
     <div id="motivo">Carregando seu motivo especial...</div>
     <button id="compartilhar">Compartilhar ❤️</button>
-    <p class="contador">Faltam <span id="diasRestantes">179</span> dias para nosso 1 ano! <span id="mensagemExtra"></span></p>
+    <p class="contador">Faltam <span id="diasRestantes">179</span> dias para <span id="dataAniversario">07/12/2025</span>! <span id="mensagemExtra"></span></p>
   </div>
 
   <script>
-    // Configuração da Data (ALTERE AQUI)
-    const dataInicio = new Date("2025-06-12T00:00:00"); 
+    // CONFIGURAÇÃO PRINCIPAL (ALTERE AQUI)
+    const dataInicio = new Date("2025-06-12T00:00:00"); // Data de início
+    const dataFinal = new Date("2025-12-07T00:00:00");  // Data final (7/12/2025)
     const dataHoje = new Date();
     dataHoje.setHours(0, 0, 0, 0);
     
-    // Cálculo do dia atual e dias restantes (CORRIGIDO)
+    // Cálculos
     const diferencaDias = Math.floor((dataHoje - dataInicio) / (86400000));
     const motivoIndex = diferencaDias;
-    
-    // Data do 1º aniversário
-    const dataAniversario = new Date(dataInicio);
-    const dataFinal= new Date("2025-12-07")
-    const diasParaAniversario = Math.ceil((datafinal - dataHoje) / (86400000));
+    const diasRestantes = Math.ceil((dataFinal - dataHoje) / (86400000));
 
     // Elementos do DOM
     const diaNumSpan = document.getElementById("diaNum");
     const motivoDiv = document.getElementById("motivo");
     const diasRestantesSpan = document.getElementById("diasRestantes");
     const mensagemExtraSpan = document.getElementById("mensagemExtra");
+    const dataAniversarioSpan = document.getElementById("dataAniversario");
     const compartilharBtn = document.getElementById("compartilhar");
+
+    // Formata a data final (ex: "07/12/2025")
+    dataAniversarioSpan.textContent = dataFinal.toLocaleDateString('pt-BR');
 
     // Animação de transição
     function mostrarMotivo(texto) {
@@ -119,18 +120,18 @@
       }, 300);
     }
 
-    // Atualiza a mensagem de contagem regressiva (FUNÇÃO NOVA)
+    // Atualiza o contador (FUNÇÃO CHAVE)
     function atualizarContador() {
-      if (diasParaAniversario > 0) {
-        diasRestantesSpan.textContent = diasParaAniversario;
+      if (diasRestantes > 0) {
+        diasRestantesSpan.textContent = diasRestantes;
         mensagemExtraSpan.textContent = "💘";
-      } else if (diasParaAniversario === 0) {
+      } else if (diasRestantes === 0) {
         diasRestantesSpan.textContent = "0";
-        mensagemExtraSpan.textContent = "🎉 Hoje é nosso aniversário! 🎉";
+        mensagemExtraSpan.textContent = "🎉 Hoje é o dia especial!";
         mensagemExtraSpan.classList.add('mensagem-aniversario');
       } else {
         diasRestantesSpan.textContent = "0";
-        mensagemExtraSpan.textContent = "🎉 Já passou nosso aniversário!";
+        mensagemExtraSpan.textContent = "🎉 Já passou nossa data especial!";
         mensagemExtraSpan.classList.add('mensagem-aniversario');
       }
     }
@@ -151,14 +152,14 @@
         else if (motivoIndex < 0) {
           mostrarMotivo("⌛ Vamos começar a contar dia: " + 
                        dataInicio.toLocaleDateString('pt-BR') + 
-                       "! Volte depois :p");
+                       "! Volte depois :v");
         } 
         else {
-          mostrarMotivo("🎉 Completamos nosso primeiro ano de namoro!!!!! Tu é o amor da minha vida, tudo contigo é mais do que perfeito. Te amo infinito! ❤️");
+          mostrarMotivo("🎉 Finalmente completamos um ano de namoro!!!! Tu é a pessoa que mais amo nessa vida, te quero pra sempre. Te amo infinito, minha Emilly ❤️");
           diaNumSpan.textContent = "179";
         }
         
-        atualizarContador(); // Chama a função nova
+        atualizarContador();
       })
       .catch(error => {
         mostrarMotivo("💔 Ops! Não consegui carregar os motivos... Mas saiba que te amo muito!");
@@ -172,7 +173,7 @@
       
       if (navigator.share) {
         navigator.share({
-          title: 'Nosso motivo especial de hoje',
+          title: 'Nosso motivo de hoje é:',
           text: textoCompartilhar,
           url: window.location.href
         }).catch(err => copiarTexto(textoCompartilhar));
