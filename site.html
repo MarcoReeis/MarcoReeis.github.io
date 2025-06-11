@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>179 Motivos por que eu te amo</title>
+  <style>
+    body {
+      background: #ffe6e6;
+      color: #4d1c1c;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 20px;
+      margin: 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 28px;
+      color: #d23669;
+      margin-bottom: 25px;
+    }
+    #motivo {
+      font-size: 20px;
+      line-height: 1.6;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      transition: opacity 0.5s ease;
+    }
+    .fade {
+      opacity: 0;
+    }
+    #compartilhar {
+      margin: 25px 0;
+      padding: 12px 25px;
+      background: linear-gradient(135deg, #ff6b6b, #d23669);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 8px rgba(210, 54, 105, 0.3);
+    }
+    #compartilhar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(210, 54, 105, 0.4);
+    }
+    .contador {
+      font-size: 16px;
+      color: #666;
+      margin-top: 20px;
+    }
+    @media (max-width: 500px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+      }
+      h1 {
+        font-size: 24px;
+      }
+      #motivo {
+        font-size: 18px;
+        min-height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Motivo #<span id="diaNum">0</span> de 179</h1>
+    <div id="motivo">Carregando seu motivo especial...</div>
+    <button id="compartilhar">Compartilhar ❤️</button>
+    <p class="contador">Faltam <span id="diasRestantes">179</span> dias para nosso 1 ano! 💘</p>
+  </div>
+
+  <script>
+    // Configuração da Data (ALTERE AQUI PARA TESTAR)
+    const dataInicio = new Date("2025-06-12T00:00:00");
+    // const dataInicio = new Date(); // Para testar com data atual
+    
+    const dataHoje = new Date();
+    dataHoje.setHours(0, 0, 0, 0);
+    
+    const diferencaDias = Math.floor((dataHoje - dataInicio) / (86400000));
+    const motivoIndex = diferencaDias;
+
+    // Elementos do DOM
+    const diaNumSpan = document.getElementById("diaNum");
+    const motivoDiv = document.getElementById("motivo");
+    const diasRestantesSpan = document.getElementById("diasRestantes");
+    const compartilharBtn = document.getElementById("compartilhar");
+
+    // Animação de transição
+    function mostrarMotivo(texto) {
+      motivoDiv.classList.add('fade');
+      setTimeout(() => {
+        motivoDiv.textContent = texto;
+        motivoDiv.classList.remove('fade');
+        compartilharBtn.style.display = (motivoIndex >= 0 && motivoIndex < 179) ? 'block' : 'none';
+      }, 300);
+    }
+
+    // Carrega os motivos
+    fetch('179_motivos.txt')
+      .then(response => {
+        if (!response.ok) throw new Error('Erro ao carregar os motivos');
+        return response.text();
+      })
+      .then(texto => {
+        const motivos = texto.trim().split("\n");
+        
+        if (motivoIndex >= 0 && motivoIndex < motivos.length) {
+          diaNumSpan.textContent = motivoIndex + 1;
+          mostrarMotivo(motivos[motivoIndex].replace(/^\d+\.\s*/, ""));
+          diasRestantesSpan.textContent = 178 - motivoIndex;
+        } 
+        else if (motivoIndex < 0) {
+          mostrarMotivo("⌛ Nosso contador de amor começa em 12/06/2025! Volte quando nosso 1º dia completar 💌");
+          diasRestantesSpan.textContent = Math.abs(motivoIndex);
+        } 
+        else {
+          mostrarMotivo("🎉 Chegamos ao nosso 1º ano de amor! Cada dia com você é um presente. Te amo infinito! ❤️");
+          diaNumSpan.textContent = "179";
+          diasRestantesSpan.textContent = "0";
+        }
+      })
+      .catch(error => {
+        mostrarMotivo("💔 Ops! Não consegui carregar os motivos... Mas saiba que te amo muito!");
+        console.error("Erro:", error);
+      });
+
+    // Compartilhamento
+    compartilharBtn.addEventListener('click', () => {
+      const motivoAtual = motivoDiv.textContent;
+      const textoCompartilhar = `Motivo #${diaNumSpan.textContent} por que eu te amo: "${motivoAtual}" ❤️`;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: 'Nosso motivo especial de hoje',
+          text: textoCompartilhar,
+          url: window.location.href
+        }).catch(err => copiarTexto(textoCompartilhar));
+      } else {
+        copiarTexto(textoCompartilhar);
+      }
+    });
+
+    function copiarTexto(texto) {
+      navigator.clipboard.writeText(texto)
+        .then(() => alert('📋 Motivo copiado! Cole para compartilhar com quem quiser ❤️'))
+        .catch(() => prompt('📢 Compartilhe este motivo:', texto));
+    }
+  </script>
+</body>
+</html>
