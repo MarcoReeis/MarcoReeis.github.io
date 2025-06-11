@@ -125,7 +125,7 @@
           diasRestantesSpan.textContent = 178 - motivoIndex;
         } 
         else if (motivoIndex < 0) {
-          mostrarMotivo("⌛ Nosso contador de amor começa em 12/06/2025! Volte quando nosso 1º dia completar 💌");
+          mostrarMotivo("⌛ Vamos começar a contar dia 12/06/2025! Volte depois 💌");
           diasRestantesSpan.textContent = Math.abs(motivoIndex);
         } 
         else {
@@ -146,7 +146,7 @@
       
       if (navigator.share) {
         navigator.share({
-          title: 'Nosso motivo especial de hoje',
+          title: 'O nosso motivo de hoje é:',
           text: textoCompartilhar,
           url: window.location.href
         }).catch(err => copiarTexto(textoCompartilhar));
